@@ -140,7 +140,7 @@ def revoke_msg(msg: GroupMsg):
 @deco.in_content(".github")
 @deco.in_content("github")
 def send_proj(msg:GroupMsg):
-    text = '本机器人源码：'+'https://github.com/willyautoman/OPQBot-Plugin-Python'+ '\n看后记得star一下哦'
+    text = '本机器人源码：'+'https://github.com/willyautoman/OPQBotPlugins-Python'+ '\n看后记得star一下哦'
     action.send_group_text_msg(toUser=msg.FromGroupId,content=text)
 
 @bot.on_group_msg
