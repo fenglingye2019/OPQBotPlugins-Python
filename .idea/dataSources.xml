@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="BotSQL" uuid="4537c7d9-50ba-4c90-89a5-7628b8b842ec">
+    <data-source source="LOCAL" name="BotSQL.db" uuid="a0317aa5-f6a8-461f-b385-fac75410c2bd">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:F:\PycharmProjects\OPQBotPlugins_git\sql\BotSQL.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/BotSQL.db</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="QA" uuid="8db713a3-7e69-4d50-98bf-9baa52b71aaa">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\PycharmProjects\OPQBotPlugins\chatPlugin\QA_data\QA.db</jdbc-url>
       <libraries>
         <library>
           <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.31.1/license.txt</url>

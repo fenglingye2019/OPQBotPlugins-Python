@@ -11,7 +11,7 @@ import datetime
 import iotbot.decorators as deco
 import requests
 import schedule
-from iotbot import IOTBOT, Action, GroupMsg
+from iotbot import IOTBOT, Action, GroupMsg, EventMsg
 
 from Utils import utils, SQLiteUtils, BaiduApi, setuUtil, ciyunUtil
 from chatPlugin import main
@@ -63,9 +63,10 @@ def sent_ciyun():
     yesterday = (today - oneday).strftime("%Y%m%d")  # 昨天的日期
     groupList = getGroupList()
     for group in groupList:
-        filename = group + '_' + yesterday + '.txt'
+        filename = str(group) + '_' + yesterday + '.txt'
         pic_base64 = ciyunUtil.create_ciyun(filename)
-        action.send_group_pic_msg(toUser=group, content="昨日本群词云已生成，请查收~[PICFLAG]", picBase64Buf=pic_base64)
+        if pic_base64 is not None:
+            action.send_group_pic_msg(toUser=group, content="昨日本群词云已生成，请查收~[PICFLAG]", picBase64Buf=pic_base64)
         # print(pic_base64)
 
 
@@ -91,20 +92,36 @@ def get_record(msg: GroupMsg):
             f.write(msg.Content + '\n')
             f.close()
 
+
+#机器人聊天，如有需要，自己取消注释
+# @bot.on_group_msg
+# @deco.only_this_msg_type("TextMsg")
+# def auto_reply(msg: GroupMsg):
+#     rand = random.randint(0, 40)
+#     print(rand)
+#     if rand % 25 == 0:  #自己计算触发概率
+#         question = msg.Content
+#         reply = main.chat(question)
+#         action.send_group_text_msg(msg.FromGroupId, reply, atUser=msg.FromUserId)
+
+
 @bot.on_group_msg
-@deco.only_this_msg_type("TextMsg")
-def auto_reply(msg: GroupMsg):
-    rand = random.randint(0, 20)
-    print(rand)
-    if rand % 15 == 0:
-        question = msg.Content
-        reply = main.chat(question)
-        action.send_group_text_msg(msg.FromGroupId, reply, atUser=msg.FromUserId)
+@deco.in_content("昨日词云")
+def send_ciyun(msg: GroupMsg):
+    print("开始生成词云")
+    today = datetime.date.today()
+    oneday = datetime.timedelta(days=1)
+    yesterday = (today - oneday).strftime("%Y%m%d") # 昨天的日期
+    groupList = getGroupList()
+    for group in groupList:
+        filename = str(group) + '_' + yesterday + '.txt'
+        pic_base64 = ciyunUtil.create_ciyun(filename)
+        action.send_group_pic_msg(toUser=group, content="昨日本群词云已生成，请查收~[PICFLAG]", picBase64Buf=pic_base64)
+    return
 
 
 @bot.on_group_msg
 @deco.in_content("色图")
-@deco.not_these_groups([1146517332])
 def send_setu(msg: GroupMsg):
     base_64 = setuUtil.get_setu()
     action.send_group_pic_msg(toUser=msg.FromGroupId, content='30S后销毁该消息，请快点冲，谢谢', picBase64Buf=base_64)
@@ -119,7 +136,12 @@ def revoke_msg(msg: GroupMsg):
             time.sleep(30)
             action.revoke_msg(msg.FromGroupId, msg.MsgSeq, msg.MsgRandom)
 
-
+@bot.on_group_msg
+@deco.in_content(".github")
+@deco.in_content("github")
+def send_proj(msg:GroupMsg):
+    text = '本机器人源码：'+'https://github.com/willyautoman/OPQBot-Plugin-Python'+ '\n看后记得star一下哦'
+    action.send_group_text_msg(toUser=msg.FromGroupId,content=text)
 
 @bot.on_group_msg
 @deco.in_content("彩虹屁")
@@ -128,21 +150,6 @@ def send_chp(a: GroupMsg):
     print(text)
     action.send_group_text_msg(toUser=a.FromGroupId, content=text)
 
-
-@bot.on_group_msg
-@deco.in_content("文案")
-def send_pyq(a: GroupMsg):
-    text = utils.get_pyq()
-    print(text)
-    action.send_group_text_msg(toUser=a.FromGroupId, content=text)
-
-
-@bot.on_group_msg
-@deco.in_content("毒鸡汤")
-def send_djt():
-    text = utils.get_djt()
-    print(text)
-    action.send_group_text_msg(toUser=a.FromGroupId, content=text)
 
 
 @bot.on_group_msg
@@ -185,12 +192,31 @@ def send_qqcys(msg: GroupMsg):
 
 @bot.on_group_msg
 def send_xingzuo(a: GroupMsg):
-    pattern = re.compile(r'#(.*?座)(.*?)运势')
+    pattern = re.compile(r'(.*?座)(.*?)运势')
     m = pattern.match(a.Content)
     if m is not None:
-        text = utils.get_xzys(m.group(1), m.group(2))
-        print(text)
-        action.send_group_text_msg(toUser=a.FromGroupId, content=text)
+        texts = utils.get_xzys(m.group(1), m.group(2))
+        print(texts)
+        for text in texts:
+            action.send_group_text_msg(toUser=a.FromGroupId, content=text)
+
+#新成员入群欢迎
+@bot.on_event
+def on_people_in_group(event: EventMsg):
+    if event.MsgType == 'ON_EVENT_GROUP_JOIN' and event.FromUin == '#####':   #此处填入需要发送欢迎的群号
+
+        UserName = event.EventData['UserName']
+        UserID = event.EventData['UserID']
+        with open('bqb//' + str(random.randint(1,161)) + '.jpg', 'rb') as f:
+            coding = base64.b64encode(f.read()).decode()
+            text = "\n[表情109][表情109]欢迎2020级萌新：%s入群[表情109][表情109]\n入群请先修改群名片（如：2020-呼市-张三）\n 有什么问题请尽管提问，在线的大二、大三的学长学姐们会很热♂情的帮你们解答的"%UserName
+            action.send_group_pic_msg(toUser=event.FromUin,content=text,atUser=UserID,picBase64Buf=coding)
+
+@bot.on_group_msg
+@deco.in_content("获取个人信息")
+def get_detail(msg:GroupMsg):
+    print(action.get_user_info(userID=msg.FromUserId))
+    print(type(action.get_user_info(userID=msg.FromUserId)))
 
 
 if __name__ == "__main__":

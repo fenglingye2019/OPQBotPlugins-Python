@@ -6,8 +6,8 @@ def get_token():
     url = 'https://openapi.baidu.com/oauth/2.0/token'
     params = {
         'grant_type': 'client_credentials',
-        'client_id': '',
-        'client_secret': ''
+        'client_id': 'IpskvYso5W3E4kPV6dVMHH3N',
+        'client_secret': '1an3P3dSQC6Qxh5Mh2eU86Z4MsFP33Ak'
     }
     res = requests.get(url=url, params=params)
     return res.json()
