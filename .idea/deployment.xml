@@ -5,7 +5,7 @@
       <paths name="AliCloud">
         <serverdata>
           <mappings>
-            <mapping deploy="/OPQBotPlugins" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/OPQBotPlugins-Python" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

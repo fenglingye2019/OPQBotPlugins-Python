@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="442b2cc8-1b10-42c3-84ff-28172836cafb" name="AliCloud" url="http://47.114.180.37">
-        <fileTransfer rootFolder="/home/OPQbot" accessType="SFTP" host="47.114.180.37" port="22" sshConfigId="992be715-6fb8-4f8a-94db-92a67730c155" sshConfig="root@47.114.180.37:22 password">
+        <fileTransfer rootFolder="/home/ubuntu" accessType="SFTP" host="152.136.95.29" port="22" sshConfigId="992be715-6fb8-4f8a-94db-92a67730c155" sshConfig="ubuntu@152.136.95.29:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

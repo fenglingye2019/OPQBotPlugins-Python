@@ -14,14 +14,12 @@ def create_ciyun(file_name):
         wordlist = jieba.cut_for_search(textfile)
         space_list = " ".join(wordlist)  # 链接词语
         backgroud = np.array(Image.open("Utils/backgroud.jpg"))  # 背景图片
-        mywordcloud = WordCloud(background_color="black",  # 背景颜色
-                                mask=backgroud,  # 写字用的背景图，从背景图取颜色
+        mywordcloud = WordCloud(mask=backgroud,  # 写字用的背景图，从背景图取颜色
                                 stopwords=STOPWORDS,  # 停止的默认词语
                                 font_path="Utils/simkai.ttf",  # 字体
                                 max_font_size=200,  # 最大字体尺寸
                                 random_state=50,  # 随机角度
                                 scale=2).generate(space_list)
-        image_color = ImageColorGenerator(backgroud)  # 生成词云的颜色
         plt.imshow(mywordcloud)  # 显示词云
         plt.axis("off")  # 关闭保存
         save_file = BytesIO()

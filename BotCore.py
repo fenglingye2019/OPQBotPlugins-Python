@@ -12,11 +12,10 @@ import iotbot.decorators as deco
 import requests
 import schedule
 from iotbot import IOTBOT, Action, GroupMsg, EventMsg
+from Utils import utils, SQLiteUtils, BaiduApi, setuUtil, ciyunUtil, weatherUtil
 
-from Utils import utils, SQLiteUtils, BaiduApi, setuUtil, ciyunUtil
-from chatPlugin import main
-day = datetime.date.today().strftime("%Y%m%d")
-bot = IOTBOT(1328382485, log_file_path='log/' + day + '.log')
+
+bot = IOTBOT(1328382485, log_file=True)
 action = Action(bot)
 
 
@@ -88,7 +87,7 @@ def get_record(msg: GroupMsg):
     today = datetime.date.today().strftime("%Y%m%d")
     if msg.MsgType == 'TextMsg':
         filename = str(msg.FromGroupId) + '_' + today + '.txt'
-        with open('record/' + filename, 'a')as f:
+        with open('record/' + filename, 'a+')as f:
             f.write(msg.Content + '\n')
             f.close()
 
@@ -125,6 +124,19 @@ def send_ciyun(msg: GroupMsg):
 def send_setu(msg: GroupMsg):
     base_64 = setuUtil.get_setu()
     action.send_group_pic_msg(toUser=msg.FromGroupId, content='30S后销毁该消息，请快点冲，谢谢', picBase64Buf=base_64)
+
+@bot.on_group_msg
+@deco.in_content("(.*?)市天气")
+def send_waether(msg:GroupMsg):
+    action.send_group_text_msg(toUser=msg.FromGroupId,content='正在查询中，请稍后······')
+    pattern = re.compile(r'(.*?)市天气')
+    m = pattern.match(msg.Content)
+    city = m.group(1)
+    weather = utils.GetWeather(city)
+    File_name = weatherUtil.Draw(weather)
+    with open('weather_pic/'+File_name, 'rb')as f:
+        coding = base64.b64encode(f.read()).decode()
+        action.send_group_pic_msg(toUser=msg.FromGroupId, picBase64Buf=coding)
 
 
 @bot.on_group_msg

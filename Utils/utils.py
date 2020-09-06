@@ -3,6 +3,7 @@ import random
 import re
 import requests
 import os
+from urllib.parse import quote
 token = "willyautoman"
 
 def get_nmsl():
@@ -28,6 +29,12 @@ def get_pyq():
     res = requests.get(url=url).text
     return res
 
+def GetWeather(city):
+    city_utf = quote(city)
+    url = 'http://apis.juhe.cn/simpleWeather/query?city={}&key=7097f3d63ccb43ea8a17a4b2d788af90'.format(city_utf)
+    reply = requests.post(url)
+    text = reply.json()
+    return text
 
 def get_djt():
     url = 'https://du.shadiao.app/api.php?from=' + token
